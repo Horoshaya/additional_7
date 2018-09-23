@@ -1,5 +1,73 @@
 module.exports = function solveSudoku(matrix) {
 function solveSudoku(matrix) {
+<<<<<<< HEAD
+	var zerosCount = 1;
+	var prevZerosCount = 0;
+	var repeatPrediction = 0;
+	var nextPredictionIndex = 0;
+	var matrixBeforePrediction = [[6, 5, 0, 7, 3, 0, 0, 8, 0],
+    [0, 0, 0, 4, 8, 0, 5, 3, 0],
+    [8, 4, 0, 9, 2, 5, 0, 0, 0],
+    [0, 9, 0, 8, 0, 0, 0, 0, 0],
+    [5, 3, 0, 2, 0, 9, 6, 0, 0],
+    [0, 0, 6, 0, 0, 0, 8, 0, 0],
+    [0, 0, 9, 0, 0, 0, 0, 0, 6],
+    [0, 0, 7, 0, 0, 0, 0, 5, 0],
+    [1, 6, 5, 3, 9, 0, 4, 7, 0]];
+
+	do {
+		if (prevZerosCount == zerosCount) {
+			if (repeatPrediction > 0) {
+				for (var i = 0; i < 9; i++) {
+					for (j = 0; j < 9; j++) {
+						matrix[i][j] = matrixBeforePrediction[i][j];
+					}
+				}
+			}	
+			solve(matrix, true, nextPredictionIndex, repeatPrediction, matrixBeforePrediction);	
+		} else {
+			solve(matrix, false);
+		}
+		
+		prevZerosCount = zerosCount;
+		zerosCount = 0;
+
+		for (var i = 0; i < 9; i++) {
+			for (var j = 0; j < 9; j++) {
+				if (matrix[i][j] == 0) {
+					zerosCount++;
+				}
+			}	
+		}
+	} while (zerosCount > 0)
+	// for (var i = 0; i < 81 ; i++) {
+	// 	solve(matrix);
+	// }
+ 	return matrix;
+}
+
+function solve(matrix, needPrediction, nextPredictionIndex, repeatPrediction, matrixBeforePrediction) {
+	
+	for (var currentRowIndex = 0; currentRowIndex < 9; currentRowIndex++) {
+		for (var currentColumnIndex = 0; currentColumnIndex < 9; currentColumnIndex++) {
+
+			if (matrix[currentRowIndex][currentColumnIndex] == 0) {
+				var row = matrix[currentRowIndex];
+				var variablesForRow = variablesForLine(row);
+				
+				var column = [];
+				for (var i = 0; i < 9; i++) {
+					column[i] = matrix[i][currentColumnIndex];
+				}
+				var variablesForColumn = variablesForLine(column);
+
+				var quarter = getQuarter(currentRowIndex, currentColumnIndex, matrix);
+				variablesForQuarter = variablesForLine(quarter);
+
+				var addNumber = [];
+				
+				for (var num = 1; num <= 9; num++) {
+=======
 	var rows;
 	var number;
 	var columns = [];
@@ -96,6 +164,60 @@ solveSudoku([
   ]);
 
 	}
+>>>>>>> b07e8f914aa4355f381b2fe9d4cb55833c9a9663
 
+					if (variablesForRow.includes(num) && 
+						variablesForColumn.includes(num) && 
+						variablesForQuarter.includes(num)) {
+						
+						addNumber.push(num);
+					}
+				}
 
+				if (addNumber.length == 1) {
+					matrix[currentRowIndex][currentColumnIndex] = addNumber[0];
+				} else if (needPrediction) {
+					needPrediction = false;
 
+					for (var i = 0; i < 9; i++) {
+						for (j = 0; j < 9; j++) {
+							matrixBeforePrediction[i][j] = matrix[i][j];
+						}
+					}
+					
+					if (addNumber.length > nextPredictionIndex) {
+						matrix[currentRowIndex][currentColumnIndex] = addNumber[nextPredictionIndex];
+						nextPredictionIndex++;
+						repeatPrediction++;
+					}
+				}
+			}	
+		}
+	}
+}
+
+function getQuarter(currentRowIndex, currentColumnIndex, matrix) {
+	var quartersLine = Math.floor(currentRowIndex/3);
+	var quartersColumn = Math.floor(currentColumnIndex/3);
+	var quarter = [];
+	for (var i = 0; i < 3; i++) {
+		for (var j = 0; j < 3; j++) {
+			quarter.push(matrix[quartersLine*3+i][quartersColumn*3+j]);
+		}
+	}	
+	return quarter;
+}
+
+	
+function variablesForLine(line) {
+	var variables = [1,2,3,4,5,6,7,8,9];
+	for (var i = 0; i < 9; i++) {
+		for (var j = 0; j < 9; j++) {
+			if (line[i] == variables[j]) {
+				variables.splice(j, 1);
+				--j;
+			}
+		}
+	}
+	return variables;
+}
