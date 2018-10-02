@@ -92,17 +92,14 @@ function getQuarter(currentRowIndex, currentColumnIndex, matrix) {
 	}	
 	return quarter;
 }
-
 	
 function variablesForLine(line) {
 	let variables = [1,2,3,4,5,6,7,8,9];
 	for (let i = 0; i < 9; i++) {
-		for (let j = 0; j < 9; j++) {
-			if (line[i].num == variables[j]) {
-				variables.splice(j, 1);
-				--j;
-			}
-		}
+        let index = variables.indexOf(line[i].num);
+        if (index >= 0) {
+            variables.splice(index, 1);
+        }
 	}
 	return variables;
 }
